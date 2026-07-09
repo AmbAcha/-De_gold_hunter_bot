@@ -8,8 +8,8 @@ from telegram.ext import (
 )
 import os
 
-TOKEN = 8938709679:AAEuJOKHPrPhnpXCGMz2
-gB9oIVC_2elNAx8
+
+TOKEN = os.environ["BOT_TOKEN"]
 
 
 WELCOME_MESSAGE = """
