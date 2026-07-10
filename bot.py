@@ -12,12 +12,14 @@ from telegram.ext import (
 from google import genai
 from google.genai import types
 
+# Setup logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
 
+# Load Environment Variables
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -40,6 +42,7 @@ if not GEMINI_API_KEY:
     logger.critical("GEMINI_API_KEY environment variable is missing!")
     exit()
 
+# Initialize the Gemini Client
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 
@@ -74,7 +77,6 @@ Already have an account?
 
 🚨 Then message me immediately so I can activate your VIP access.
 """
-
     await update.message.reply_text(text)
 
 
@@ -83,11 +85,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     try:
+        # Show "typing..." status while generating response
         await context.bot.send_chat_action(
             chat_id=update.effective_chat.id,
             action=ChatAction.TYPING,
         )
 
+        # Call Gemini SDK
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=update.message.text,
@@ -101,15 +105,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         logger.exception(e)
-        await update.message.reply_text(
-            f"⚠️ Error:\n{str(e)}"
-        )
+        await update.message.reply_text(f"⚠️ Error:\n{e}")
+
+
+def main():
     if not TELEGRAM_TOKEN:
         logger.critical("TELEGRAM_TOKEN environment variable is missing!")
         return
 
+    # Build Telegram Bot application
     app = Application.builder().token(TELEGRAM_TOKEN).build()
 
+    # Handlers
     app.add_handler(CommandHandler("start", start_command))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
