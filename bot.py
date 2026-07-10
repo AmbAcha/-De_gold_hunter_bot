@@ -107,12 +107,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Yo bro, ran into a slight network glitch processing that. Send it again!")
 
 # 6. Main Runner
+d.    import os  # Make sure this is at the very top of your file
+
 def main() -> None:
-    if not TELEGRAM_TOKEN:
+    # Fetch the token from Render's environment variables
+    telegram_token = os.environ.get('TELEGRAM_TOKEN')
+
+    if not telegram_token:
         logger.critical("TELEGRAM_TOKEN env var is missing!")
         return
 
-    application = Application.builder().token(TELEGRAM_TOKEN).build()
+    # Pass the fetched token into the builder
+    application = Application.builder().token(telegram_token).build()
+
 
     # Link the commands and messages
     application.add_handler(CommandHandler("start", start_command))
