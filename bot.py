@@ -1,3 +1,4 @@
+import os
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -6,78 +7,101 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
-import os
-
 
 TOKEN = os.environ["BOT_TOKEN"]
 
+WELCOME_MESSAGE = (
+    "😎 Yo bro sup 😎\n\n"
+    "Goldhunter Paul here 🦁.\n\n"
+    "Welcome! If you're serious about joining my VIP trading community, "
+    "you're in the right place.\n\n"
+    "⚠️ Only 5 spots left. Be quick!\n\n"
+    "How to join:\n"
+    "https://iqcrest.com\n\n"
+    "💎 VIP Channel\n"
+    "FREE access with a qualifying deposit of $300+\n\n"
+    "👑 VIP PLUS\n"
+    "Join with a qualifying deposit of $1000+ and unlock exclusive access "
+    "to Goldhunter Paul's live-streamed trading course.\n\n"
+    "🌐 Register here:\n"
+    "https://iqcrest.com\n\n"
+    "Already have an account?\n"
+    "1. Log in to your broker.\n"
+    "2. Make a deposit.\n"
+    "3. Make sure all positions are closed.\n\n"
+    "📩 Once your account is set up, send me a message so I can activate "
+    "your access and guide you further!"
+)
 
-WELCOME_MESSAGE = """
-😎 Yo bro sup 😎
-
-Goldhunter Paul here 🦁.
-
-I'm the first trader in the world with a license. I've a lot of experience. If you want to join the VIP .. I send you the link right now. Just follow the steps and I see you there.
-
-⚠️ Only 5 spots left be quick !!
-
-Here's how to join:
-https://iqcrest.com
-
-– VIP Channel: FREE access with a deposit of $300+
-– VIP PLUS Channel: Join with $1000+ and unlock exclusive access to Goldhunter Paul's live-streamed trading course 🎓📈
-
-🔗 Start with PU Prime here
-👉 https://iqcrest.com
-
-Already have an account? Connect to active trades:
-1️⃣ Log in to your broker
-2️⃣ Make a deposit
-3️⃣ Make sure all positions are closed
-
-🚨 Once your account is set up, send me a message right away so I can activate your access and guide you further! 📨
-"""
-
-FAQ = {
-    "register": "To register, visit https://iqcrest.com and create your trading account. After funding it, send me a message so I can activate your VIP access.",
-    "deposit": "VIP requires a deposit of $300+. VIP PLUS requires a deposit of $1000+.",
-    "vip": "VIP is FREE with a $300+ deposit. VIP PLUS is available with a $1000+ deposit.",
-    "account": "If you already have an account, make a deposit and ensure all positions are closed before contacting us for activation.",
-}
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(WELCOME_MESSAGE)
 
-async def reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "You can ask me about:\n\n"
+        "• Registration\n"
+        "• Deposits\n"
+        "• VIP\n"
+        "• Existing accounts"
+    )
+
+
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.lower()
 
     if "register" in text:
-        await update.message.reply_text(FAQ["register"])
+        reply = (
+            "To register, visit:\n"
+            "https://iqcrest.com\n\n"
+            "Create your account, make the required deposit, "
+            "then message Goldhunter Paul for activation."
+        )
+
     elif "deposit" in text:
-        await update.message.reply_text(FAQ["deposit"])
+        reply = (
+            "Deposit requirements:\n\n"
+            "• VIP: $300+\n"
+            "• VIP PLUS: $1000+"
+        )
+
     elif "vip" in text:
-        await update.message.reply_text(FAQ["vip"])
+        reply = (
+            "VIP gives you access to our trading community.\n"
+            "VIP PLUS includes additional premium training."
+        )
+
     elif "account" in text:
-        await update.message.reply_text(FAQ["account"])
+        reply = (
+            "If you already have an account, "
+            "make your deposit and contact Goldhunter Paul "
+            "to activate your VIP access."
+        )
+
     else:
-        await update.message.reply_text(
-            "Thanks for your message! 😊\n\n"
-            "I can help you with:\n"
+        reply = (
+            "I can help with:\n"
             "• Registration\n"
             "• Deposits\n"
-            "• VIP access\n"
+            "• VIP\n"
             "• Existing accounts\n\n"
-            "Type your question, or contact Goldhunter Paul for personal assistance."
+            "Please type your question."
         )
+
+    await update.message.reply_text(reply)
+
 
 def main():
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reply))
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    print("Bot is running...")
+    print("Bot started successfully.")
     app.run_polling()
+
 
 if __name__ == "__main__":
     main()
