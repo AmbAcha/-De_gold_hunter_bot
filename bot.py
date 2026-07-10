@@ -91,9 +91,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             action=ChatAction.TYPING,
         )
 
-        # Call Gemini SDK
+        # Call Gemini SDK using the correct 2026 model version
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.5-flash",
             contents=update.message.text,
             config=types.GenerateContentConfig(
                 system_instruction=SYSTEM_PROMPT,
