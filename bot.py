@@ -100,10 +100,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(response.text)
 
     except Exception as e:
-        logger.exception(e)
-        await update.message.reply_text(
-            "⚠️ Sorry bro, something went wrong. Please try again."
-        )
+    logger.exception(e)
+    await update.message.reply_text(
+        f"⚠️ Error:\n{e}"
+    )
 
 
 def main():
