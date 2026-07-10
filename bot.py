@@ -7,7 +7,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-TOKEN = "YOUR_BOT_TOKEN_HERE"
+TOKEN= "8938709679:AAEuJOKHPrPhnpXCGMz2
+gB9oIVC_2elNAx8"
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_name = update.effective_user.first_name
@@ -27,3 +28,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
