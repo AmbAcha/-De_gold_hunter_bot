@@ -107,7 +107,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Yo bro, ran into a slight network glitch processing that. Send it again!")
 
 # 6. Main Runner
-d.    import os  # Make sure this is at the very top of your file
+d.    # Make sure this is at the very top of your file
 
 def main() -> None:
     # Fetch the token from Render's environment variables
