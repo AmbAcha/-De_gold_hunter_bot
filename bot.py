@@ -99,14 +99,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(response.text)
 
-         except Exception as e:
+    except Exception as e:
         logger.exception(e)
         await update.message.reply_text(
-            f"⚠️ Error:\n{e}"
+            f"⚠️ Error:\n{str(e)}"
         )
-
-
-def main():
     if not TELEGRAM_TOKEN:
         logger.critical("TELEGRAM_TOKEN environment variable is missing!")
         return
