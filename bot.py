@@ -20,12 +20,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Load Environment Variables
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Load Environment Variables and strip accidental line breaks/spaces
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "").strip()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 
 # Retrieve your personal Telegram ID for automatic forwarding
-MY_TELEGRAM_ID = os.getenv("MY_TELEGRAM_ID")
+MY_TELEGRAM_ID = os.getenv("MY_TELEGRAM_ID", "").strip()
 MY_ID = int(MY_TELEGRAM_ID) if MY_TELEGRAM_ID and MY_TELEGRAM_ID.isdigit() else None
 
 SYSTEM_PROMPT = """
@@ -196,7 +196,7 @@ def main():
     port = int(os.environ.get("PORT", 8000))
     
     # Render provides this environment variable automatically on Web Services
-    render_url = os.environ.get("RENDER_EXTERNAL_URL")
+    render_url = os.environ.get("RENDER_EXTERNAL_URL", "").strip()
 
     if render_url:
         logger.info(f"Starting bot using Webhooks on port {port}...")
