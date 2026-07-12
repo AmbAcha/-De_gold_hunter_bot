@@ -192,13 +192,24 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
-    logger.info("Goldhunter Paul bot started on Free Tier.")
-    
-    # Grab the secret port Render forces Web Services to open
+    # Read the custom port Render binds our application to
     port = int(os.environ.get("PORT", 8000))
     
-    # Run polling with the correct parameter name 'listen_address'
-    app.run_polling(listen_address="0.0.0.0", port=port)
+    # Render provides this environment variable automatically on Web Services
+    render_url = os.environ.get("RENDER_EXTERNAL_URL")
+
+    if render_url:
+        logger.info(f"Starting bot using Webhooks on port {port}...")
+        app.run_webhook(
+            listen="0.0.0.0",
+            port=port,
+            url_path=TELEGRAM_TOKEN,
+            webhook_url=f"{render_url}/{TELEGRAM_TOKEN}"
+        )
+    else:
+        # Fallback to Polling for local development testing
+        logger.info("No Render environment found. Starting bot via Polling...")
+        app.run_polling()
 
 
 if __name__ == "__main__":
