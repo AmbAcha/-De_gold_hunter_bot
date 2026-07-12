@@ -12,6 +12,7 @@ from telegram.ext import (
 )
 from google import genai
 from google.genai import types
+from google.genai import errors  # <-- Added to catch Gemini rate limit exceptions
 
 # Setup logging
 logging.basicConfig(
@@ -109,9 +110,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(response.text)
 
+    except errors.APIError as e:
+        logger.exception(e)
+        if e.code == 429:
+            custom_message = (
+                "⚠️ **Service Notice**\n\n"
+                "We are currently not available to take your request now. "
+                "Try again in a moment while we fix this, but **make sure your deposit "
+                "is still valid** while we process your request."
+            )
+            await update.message.reply_text(custom_message, parse_mode="Markdown")
+        else:
+            await update.message.reply_text("🤖 Service is temporarily busy. Please retry your request shortly.")
+
     except Exception as e:
         logger.exception(e)
-        await update.message.reply_text(f"⚠️ Error:\n{e}")
+        await update.message.reply_text("❌ An unexpected error occurred. Please try again in a few moments.")
 
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -174,9 +188,22 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(response.text)
 
+    except errors.APIError as e:
+        logger.exception(e)
+        if e.code == 429:
+            custom_message = (
+                "⚠️ **Service Notice**\n\n"
+                "We are currently not available to take your request now. "
+                "Try again in a moment while we fix this, but **make sure your deposit "
+                "is still valid** while we process your request."
+            )
+            await update.message.reply_text(custom_message, parse_mode="Markdown")
+        else:
+            await update.message.reply_text("🤖 Service is temporarily busy. Please retry verifying your screenshot shortly.")
+
     except Exception as e:
         logger.exception(e)
-        await update.message.reply_text(f"⚠️ Error handling screenshot:\n{e}")
+        await update.message.reply_text("❌ An unexpected error occurred while processing your image. Please try again.")
 
 
 def main():
